@@ -191,6 +191,7 @@ int main(void)
 	      {
 
 	    	  while () // basic loop to satisfy the stationary mode
+	    		  // not required the last code
 			  {
 
 				  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
@@ -204,49 +205,6 @@ int main(void)
 				  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
 				  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
 				  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
-								  HAL_Delay(1000);  // 1000 ms encendido
-								  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
-								  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
-
-
-								  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
-								  HAL_Delay(1000);  // 1000 ms encendido
-								  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
-								  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
-
-								  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
-												  HAL_Delay(1000);  // 1000 ms encendido
-												  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
-												  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
-
-
-												  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
-												  HAL_Delay(1000);  // 1000 ms encendido
-												  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
-												  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
-
-												  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
-																  HAL_Delay(1000);  // 1000 ms encendido
-																  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
-																  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
-
-
-																  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
-																  HAL_Delay(1000);  // 1000 ms encendido
-																  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
-																  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
-
-																  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
-																				  HAL_Delay(1000);  // 1000 ms encendido
-																				  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
-																				  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
-
-
-																				  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
-																				  HAL_Delay(1000);  // 1000 ms encendido
-																				  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
-																				  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
-
 
 
 				  if (flag_right  || flag_left) // press any button to exit from stationary mode
@@ -257,25 +215,6 @@ int main(void)
 				  }
 			  }
 	      }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
