@@ -46,6 +46,11 @@ UART_HandleTypeDef huart2;
 uint8_t TL[] = "Turn LEFT\n\r";
 uint8_t TR[] = "Turn RIGHT\n\r";
 
+uint8_t TLL[] = "Turn LEFT indefinitely\n\r";
+uint8_t TRR[] = "Turn RIGHT indefinitely\n\r";
+uint8_t stac[] = "Stationary mode \n\r";
+
+
 volatile uint8_t flag_left = 0;
 volatile uint8_t flag_right = 0;
 volatile uint8_t timmingb1= 0;
@@ -106,8 +111,8 @@ int main(void)
   while (1)
   {
 
-	      // Lógica para manejar el parpadeo de los LEDs
-	      if (flag_left)  // Si se ha presionado el botón S1
+	      // Logic to implement toggle led's
+	      if (flag_left)  // if b1 is pressed
 	      {
 	          for (int i = 0; i < 3; i++)
 	          {
@@ -115,7 +120,13 @@ int main(void)
 	              HAL_Delay(1000);  // 500 ms encendido == 2HZ
 	              HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //  LED D1
 	              HAL_Delay(1000);  // 500 ms apagado
-	              HAL_UART_Transmit(&huart2, TL, sizeof(TL)-1, 100);  // UART
+	              HAL_UART_Transmit(&huart2, TL, sizeof(TL)-1, 100);  // UART communication
+
+			  if (flag_right) // if b2 is pressed with LD1 on
+						  {
+							  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);  //
+							  continue;
+						  }
 	          }
 	          flag_left = 0;  // reset
 	      }
@@ -129,10 +140,123 @@ int main(void)
 	              HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
 	              HAL_Delay(1000);  // 500 ms apagado == 4HZ
 	              HAL_UART_Transmit(&huart2, TR, sizeof(TL)-1, 100);  // UART
+	          if (flag_left) // if b1 is pressed with LD2 on
+	          {
+	              HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);  //
+	              continue;
+	          }
 	          }
 	          flag_right = 0;  // RESET
 	      }
+// adding logic to turn indefintely if press two times (not on 500ms or less )
 
+	      if (flag_left && timmingb1 == 2) // adding logic to
+	      {
+	    	  while ()
+	    	  {
+
+	              HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
+	              HAL_Delay(1000);  // 500 ms encendido
+	              HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
+	              HAL_Delay(1000);  // 500 ms apagado == 4HZ
+	              HAL_UART_Transmit(&huart2, TLL, sizeof(TL)-1, 100);  // UART
+
+	              if (flag_left) // press button b1 to close loop
+
+	              {
+	            	  break;
+	              }
+	    	  }
+	      }
+
+	      if (flag_right && timming2 == 2)
+	    	      {
+	    	    	  while ()
+	    	    	  {
+
+	    	              HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
+	    	              HAL_Delay(1000);  // 1000 ms encendido
+	    	              HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
+	    	              HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+	    	              HAL_UART_Transmit(&huart2, TRR, sizeof(TL)-1, 100);  // UART
+
+	    	              if (flag_right) // press button b2 to close loop
+	    	              {
+	    	            	  break;
+	    	              }
+	    	    	  }
+	    	      }
+
+	      if (flag_right && flag_left)
+	      {
+
+	    	  while () // basic loop to satisfy the stationary mode
+			  {
+
+				  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
+				  HAL_Delay(1000);  // 1000 ms encendido
+				  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
+				  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+
+				  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
+				  HAL_Delay(1000);  // 1000 ms encendido
+				  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
+				  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+				  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
+								  HAL_Delay(1000);  // 1000 ms encendido
+								  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
+								  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+
+								  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
+								  HAL_Delay(1000);  // 1000 ms encendido
+								  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
+								  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+								  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
+												  HAL_Delay(1000);  // 1000 ms encendido
+												  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
+												  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+
+												  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
+												  HAL_Delay(1000);  // 1000 ms encendido
+												  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
+												  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+												  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
+																  HAL_Delay(1000);  // 1000 ms encendido
+																  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
+																  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+
+																  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
+																  HAL_Delay(1000);  // 1000 ms encendido
+																  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
+																  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+																  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
+																				  HAL_Delay(1000);  // 1000 ms encendido
+																				  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
+																				  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+
+																				  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  //
+																				  HAL_Delay(1000);  // 1000 ms encendido
+																				  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //
+																				  HAL_Delay(1000);  // 1000 ms apagado == 4HZ
+
+
+
+				  if (flag_right  || flag_left) // press any button to exit from stationary mode
+				  {
+					  HAL_UART_Transmit(&huart2, stac, sizeof(TL)-1, 100);  // UART
+					  break;
+
+				  }
+			  }
+	      }
 
 
 
@@ -292,13 +416,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if(GPIO_Pin == B1_Pin)  // B1
     {
-        flag_left = 1;// Activa la bandera para procesar el parpadeo en el main
-        timmingb1 ++; // aumenta el contador para b1
+        flag_left = 1;// Activate the flag to process the blinking in main
+        timmingb1 ++; // increase the counter for b1
     }
     else if(GPIO_Pin == B2_Pin)  // B2
     {
-        flag_right = 1; //Activa la bandera para procesar el parpadeo en el main
-        timmingb2 ++; // aumenta el contador para b2
+        flag_right = 1; //Activate the flag to process the blinking in main
+        timmingb2 ++; // increase the counter for b2
     }
 }
 /* USER CODE END 4 */
