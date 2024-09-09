@@ -43,6 +43,14 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+uint8_t TL[] = "Turn LEFT\n\r";
+uint8_t TR[] = "Turn RIGHT\n\r";
+
+volatile uint8_t flag_left = 0;
+volatile uint8_t flag_right = 0;
+volatile uint8_t timmingb1= 0;
+volatile uint8_t timmingb2= 0;
+volatile uint8_t localtim = 0;
 
 /* USER CODE END PV */
 
@@ -97,14 +105,63 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
 
+	      // Lógica para manejar el parpadeo de los LEDs
+	      if (flag_left)  // Si se ha presionado el botón S1
+	      {
+	          for (int i = 0; i < 3; i++)
+	          {
+	              HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);  // ON LEDD1
+	              HAL_Delay(1000);  // 500 ms encendido == 2HZ
+	              HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET); //  LED D1
+	              HAL_Delay(1000);  // 500 ms apagado
+	              HAL_UART_Transmit(&huart2, TL, sizeof(TL)-1, 100);  // UART
+	          }
+	          flag_left = 0;  // reset
+	      }
+
+	      if (flag_right)  //
+	      {
+	          for (int i = 0; i < 3; i++)
+	          {
+	              HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);  //
+	              HAL_Delay(1000);  // 500 ms encendido
+	              HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET); //
+	              HAL_Delay(1000);  // 500 ms apagado == 4HZ
+	              HAL_UART_Transmit(&huart2, TR, sizeof(TL)-1, 100);  // UART
+	          }
+	          flag_right = 0;  // RESET
+	      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
-
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -231,7 +288,19 @@ static void MX_GPIO_Init(void)
 
 // Function used for implement the interruption from the system
 
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if(GPIO_Pin == B1_Pin)  // B1
+    {
+        flag_left = 1;// Activa la bandera para procesar el parpadeo en el main
+        timmingb1 ++; // aumenta el contador para b1
+    }
+    else if(GPIO_Pin == B2_Pin)  // B2
+    {
+        flag_right = 1; //Activa la bandera para procesar el parpadeo en el main
+        timmingb2 ++; // aumenta el contador para b2
+    }
+}
 /* USER CODE END 4 */
 
 /**
