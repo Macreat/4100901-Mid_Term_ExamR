@@ -58,6 +58,9 @@ volatile uint8_t timmingb2= 0;
 volatile uint8_t localtim = 0;
 uint32_t last_button_press_left = 0;
 uint32_t last_button_press_right = 0;
+const uint32_t debounceDelay = 50; // 50ms debounce delay
+const uint32_t doublePressTime = 500; // max time for double press
+
 
 /* USER CODE END PV */
 
@@ -115,73 +118,81 @@ int main(void)
 
 	      // Logic to implement toggle led's
 	  //  first on turn led
-	          if (flag_left) {
-	              flag_left = 0;
-	              if (timmingb1 == 1) { // Si se presiona 1 vez
-	                  for (int i = 0; i < 3; i++) {
-	                      HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
-	                      HAL_Delay(125); // 4Hz = 125ms encendido
-	                      HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-	                      HAL_Delay(125);
-	                  }
-	                  HAL_UART_Transmit(&huart2, TL, sizeof(TL) - 1, 100);
-	              } else if (timmingb1 >= 2) { // Si se presiona más de 2 veces
-	                  HAL_UART_Transmit(&huart2, TLL, sizeof(TLL) - 1, 100);
-	                  while (1) { // Parpadeo indefinido
-	                      HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
-	                      HAL_Delay(125);
-	                      HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-	                      HAL_Delay(125);
-	                      if (flag_left || flag_right) { // Presionar cualquier botón para detener
-	                          break;
-	                      }
-	                  }
-	              }
-	          }
+	         if (flag_left) {
+	             flag_left = 0;
+	             if (timmingb1 == 1) { // if b1 is pressed
+	                 for (int i = 0; i < 3; i++) {
+	                     HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+	                     HAL_Delay(125); // 4Hz = 125ms encendido
+	                     HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+	                     HAL_Delay(125);
+	                 }
+	                 HAL_UART_Transmit(&huart2, TL, sizeof(TL) - 1, 100);
+	             } else if (timmingb1 >= 2) { // Si se presiona más de 2 veces
+	                 HAL_UART_Transmit(&huart2, TLL, sizeof(TLL) - 1, 100);
+	                 while (1) { //
+	                     HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+	                     HAL_Delay(125);
+	                     HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+	                     HAL_Delay(125);
+	                     if (flag_left || flag_right) { // Press any button to close loop
+	                         break;
+	                     }
+	                 }
+	             }
+	         }
 
-	          //  implement turn right
-	          if (flag_right) {
-	              flag_right = 0;
-	              if (timmingb2 == 1) {
-	                  for (int i = 0; i < 3; i++) {
-	                      HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
-	                      HAL_Delay(125); // 4Hz = 125ms encendido
-	                      HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-	                      HAL_Delay(125);
-	                  }
-	                  HAL_UART_Transmit(&huart2, TR, sizeof(TR) - 1, 100);
-	              } else if (timmingb2 >= 2) {
-	                  HAL_UART_Transmit(&huart2, TRR, sizeof(TRR) - 1, 100);
-	                  while (1) {
-	                      HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
-	                      HAL_Delay(125);
-	                      HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-	                      HAL_Delay(125);
-	                      if (flag_left || flag_right) {
-	                          break;
-	                      }
-	                  }
-	              }
-	          }
+	         //  turn right
+	         if (flag_right) {
+	             flag_right = 0;
+	             if (timmingb2 == 1) {
+	                 for (int i = 0; i < 3; i++) {
+	                     HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+	                     HAL_Delay(125); // 4Hz = 125ms
+	                     HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+	                     HAL_Delay(125);
+	                 }
+	                 HAL_UART_Transmit(&huart2, TR, sizeof(TR) - 1, 100);
+	             } else if (timmingb2 >= 2) {
+	                 HAL_UART_Transmit(&huart2, TRR, sizeof(TRR) - 1, 100);
+	                 while (1) {
+	                     HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+	                     HAL_Delay(125);
+	                     HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+	                     HAL_Delay(125);
+	                     if (flag_left || flag_right) {
+	                         break;
+	                     }
+	                 }
+	             }
+	         }
 
-	          // stationary mode
-	          if (timmingb1 >= 1 && timmingb2 >= 1 && (HAL_GetTick() - last_button_press_left < 500) && (HAL_GetTick() - last_button_press_right < 500)) {
-	              HAL_UART_Transmit(&huart2, stac, sizeof(stac) - 1, 100);
-	              while (1) {
-	                  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
-	                  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
-	                  HAL_Delay(125);
-	                  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-	                  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-	                  HAL_Delay(125);
-	                  if (flag_left || flag_right) {
-	                      break;
-	                  }
-	              }
-	          }
+	         // stationary mode
+	         if (timmingb1 >= 1 && timmingb2 >= 1 &&
+	             (HAL_GetTick() - last_button_press_left < doublePressTime) &&
+	             (HAL_GetTick() - last_button_press_right < doublePressTime)) {
+
+	             HAL_UART_Transmit(&huart2, stac, sizeof(stac) - 1, 100);
+
+	             while (1) {
+	                 HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+	                 HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+	                 HAL_Delay(125);
+	                 HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+	                 HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+	                 HAL_Delay(125);
+	                 if (flag_left || flag_right) { // press any button to close loop
+
+	                     break;
+	                 }
+	             }
+
+	             // Reset to contrarrest debounce
+	             timmingb1 = 0;
+	             timmingb2 = 0;
 
 
-
+	         }
 
     /* USER CODE END WHILE */
 
